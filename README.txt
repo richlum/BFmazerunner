@@ -1,36 +1,11 @@
 Student Name #1:		Richard Lum
-Student ugrad login #1: 	i0r7
-
-Student Name #2:
-Student ugrad login #2:
-
-Team name (for fun!):		Dr. Noonien Soong 
-
-Acknowledgment that you understand and have followed the course's
-collaboration policy
-(http://www.ugrad.cs.ubc.ca/~cs221/current/syllabus.shtml#conduct):
-
-[[Put your names here again]]
-				Richard Lum
-----------------------------------------------------------------------
-
-Approximate hours on project:
-				55
-----------------------------------------------------------------------
-
-For teams, rough breakdown of work:
-
 ----------------------------------------------------------------------
 
 Acknowledgment of assistance:
 Text:		Koffman, Objects, Abstractions, DataStructures
 		esp for heap algorithmns 
-ClassNotes:	
-TA assist : 	Haoyu Zhou - on heap implementation and c++ syntax
-Matygo discussion list.
 reference: 	to help resolve how to use Abstract base class
 http://stackoverflow.com/questions/650091/using-an-abstract-class-in-c
-Robert S. Barnes
 
 Summary
 - implemented Best First Maze Runner to display 
