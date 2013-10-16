@@ -1,0 +1,91 @@
+v01 20110209 - exactly copy randommazeRunner into BFMazeRunner Class, modify make file and runmaze 
+	duplicates original supplied functionality to ensure no make issues. Next step is to 
+	modify BFMazeRunner to use supplied PQueue.h.  Once that works, then on to implement my
+	own PQueue class.
+v02 20110210 - implement picknextnode utilizing manhattan distance algorithm
+	since compare::SquareMazeNodeCompare::bool operator()(SquareMaze::SquareMazeNode ..
+	PriorityQueue<Object,Compare> impl as UnsLLPQueue<SquareMaze::SquareMazeNode, SquareMazeNodeCompare>
+	pq->insert((SquareMaze::SquareMazeNode)aMazeNode)  //may be unsafe??
+	Need to redefine BFMazeRunner to take priorirtyqueue as a parameter.
+testHeapv01 - implemented DHeap as a hardcoded binary heap class with sort2.
+	copied templating as done in UnsLLPqueue.
+	algorthim is zero based  counting and is built on top of Vector class
+	some complications arising from attempt to set infrastructure up for D vs binary
+v03 20110213 - based on v02, addressed the solution path problem.  Since BestFirst picks
+	nodes that are not adjacent for next examination, we cannot assume we can just point
+	the nextInSolution based on pickNextNode order.   The alternating between different
+	ends of the current solution path leads to broken links forward causing null pointers
+	at in some situations.  Removed all updating of extranodeInfo->nextInSoltion during 
+	the exploration process and inserted a recursive call to pointToMe once we reach 
+	the final destination.  This recurses over the set of physical neighbors from exit
+	node backwards that we have visited.  Out of this subset, the recursive call is
+	on nodes that we have updated the extraInfo->nextInSolution .  We have to make
+	this second pass backwards in order to establish physical path from exit to start.
+	The jumping around of pickNextNode does not allow us to build a single path 
+	forward as it constantly alternates between diverse paths. Either we have to 
+	recalculate on each iteration or simply recurse backwards as we have here.
+	TODO : integrate DHeap with Binary tree into runmaze.
+		revise DHeap for more general D airity and test against sort
+		update runmaze with revised DHeap.
+	Total time est todate : 30hours.
+v04 20110213 - seg fault found when running visualizer mode.  Took several hours to track it
+	down to the fact that the ExtraNodeInfo is being written to by visualizer (suspect).
+	havent been able to find where it writes it, but manually testing for exit node
+	in pointToMe allows us to correctly update the solution trace in ExtraNodeInfo
+	->nextInSolution.  Without this manual intervention, the solution never gets updated
+	by pointToMe when runmaze -v is used.  Tested OK and matches solutions provided
+	as well as nonvisualizer solution.  Back to core work of integrating Dheapx    
+	Total time est 35 hours
+wrkg - restructured to take priorityQ as a paramater during constructor.	
+v05 20110213 - seg fault reappeared with new changes.  added explicit call to all mazenodes
+	to create an ExtraNodeInfo value and explictly null them out before calling pointToMe
+	Also integrated DHeap(btree from) into runmaze.  Changed all ref from UnsLLPQueue to 
+	DHeap.  Found error handling in calculation of min child indexes that ignored 
+	the fact that they were bigger than the heap size at the boundary condition.
+	all fixed and working version with debug printouts everywhere (messy)
+	Next step to implement D Heap mods and retest.
+	Total time est: 38 hours
+v06 20110214 -implemented ability to handle variable arity in DHeap and tested with sort2
+	integrated with runmaze currently using arity 16.   All seems to be working ok.
+	TODO: 
+	buiild default 2 heap with optionality for specifing arity
+	ask about how to take a pointer to PriorityQueue as a parameter such that
+		you can pass it a derived DHeap class and get it to accept it
+	remove debug printouts,
+	documentation
+		file description
+		name/time
+		acknowlegement
+		description
+	questions
+		BestFirst guaranteed to find shortest?
+		makeEmpty efficiency
+		sort 1 millin randoms and output 1st 10k in sorted. compare perf 2,3,4heap.
+		ExtraNodeInfo vs setParentPath
+	retest by only applying changes to makefile and runmaze
+	
+v07 20110214 - implemented sort with range of arity for testing.
+	removed debug echos (commented out, yet to clean up code)
+	added initial code comments
+	using extraNodeInfo instead of setpathparent/ ok by steve
+v08 20110215 - BFMazeRunner (PriorityQueue<..> *) abstract class parameter implemented
+	to allow call to BFMazeRunner and pass it any of the derived PriorityQueue 
+	objects.  Shifted BFMazeRunner->priorityQ member to pointer to PriorityQueue as
+	well as associated changes.  Allows storing of any child PriorityQueue objects
+	and use of them dynamically on BFMazeRunner calls.
+	Total Time est : 45 hours	
+ 
+v09 20110216 - revised methods to not reference SquareMazeNode but rather MazeNode.
+         SquareNodeCompareMazeNode revised to do cast as required.  All intervening
+         priorityq and mazerunners deal with mazenode.
+v10 20110216 - corrected and tested 1 based array logic underneath DHeap. Implemented
+	sort using 1 and 0 based array.  Implemented DHeap constructor to allow specification
+	of both arity and array base.  Cleaned up comments
+	Total Time est 50 hours.
+
+v11 20110223 - fixed handling of no solution. Detect empty pq and return null to flag 
+	no more items on queue to search.
+	investigated A* algorithm.  Requires use of set parent path rather than the
+	nextInSolution that this solution is based on. This is required to calculate
+	total cost of getting from start to current node. Possible to do with 
+	ExtraNOdeINfo but clumsy.  

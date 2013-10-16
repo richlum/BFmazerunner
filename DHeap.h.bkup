@@ -1,0 +1,96 @@
+// This file contains the declaration of the concrete class
+// Dheap which extends the base class
+// PriorityQueue. 
+
+#ifndef _DHEAP_H
+#define _DHEAP_H
+
+#include <vector>
+#include <iostream>
+#include "PQueue.h"
+
+using namespace std;
+
+// The Dheap class is a heap with each parent having D children.
+// It extends the abstract class PriorityQueue
+// keeping both template arguments.
+// It is based on Vector as the underlying structure.
+
+// This is a min heap
+// invariant: parents key is less than all children key. Min is always at top
+// invariant: structure is nearly complete tree. Depth is always O(log n).
+//            next open location is end of Vector.
+template <class Object, class Compare>
+class DHeap : public PriorityQueue<Object, Compare> {
+public:
+
+
+  DHeap(){
+	arity = 2;
+	rootIndex=0;
+	theHeap = vector<Object>();
+	if (rootIndex ==1) {// put something in zero position so push_back works
+		Object o;   // rootindex=1 not tested.
+		theHeap.push_back(o);
+	}
+	cout << "Using Default Heap Arity = " << arity << endl;
+	};
+  
+  DHeap(int requestedArity){
+	this->arity = requestedArity;
+	rootIndex=0; 
+	theHeap = vector<Object>();
+	if (rootIndex ==1) {
+		Object o;
+		theHeap.push_back(o);
+	}
+	cout << "setting Heap Arity = " << arity << endl;
+	};          
+
+  ~DHeap() { 
+	makeEmpty();
+	 };    
+
+  // Const functions
+
+  bool isEmpty() const;               // True iff the pqueue is empty
+  const Object & findMin() const;     // Returns unchangeable reference to
+                                      // minimum elment. Should _not_ be 
+                                      // used to alter the minimum
+                                      // element in any way.
+  
+  // Non-const functions
+
+  void insert(const Object & x);      // Inserts a copy of x into the pqueue
+  void deleteMin();                   // Deletes the minimum element from 
+                                      // the dheap
+  void deleteMin(Object & minItem);   // Deletes the minimum element
+                                      // from the dheap and puts a copy 
+                                      // of it into minItem.
+  void makeEmpty();                   // Deletes all elements from the
+                                      // dheap
+  bool isFull();		// return true if heap is full. 
+  void printHeap();
+private:
+  int arity;  			// for testing. update with constructor later
+  int rootIndex;  		// the root of the tree = min
+  std::vector<Object> theHeap;
+
+  // Some helper functions for internal use
+  int percolateUp(int childIndex, int parentIndex);  // returns final position of new object that 
+                                                     // was added at the end of the tree.
+  int percolateDown(); 	//for relocating last object into new hole at root created by deleteMin
+  int getParentIndex(int childIndex);
+  int findMinChildIndex(int parentIndex);
+  void swapPosition(int child, int parent);
+  void findChildIndexes(int parentIndex, int* childIndexes); 
+
+
+};
+
+
+//  implementation code to make templates work.
+#include "DHeap.cpp"
+
+
+#endif
